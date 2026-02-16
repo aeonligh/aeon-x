@@ -12,6 +12,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
+    if (file.type !== 'application/pdf') {
+      return NextResponse.json({ error: 'Only PDF files are allowed' }, { status: 400 });
+    }
+
     const buffer = Buffer.from(await file.arrayBuffer());
     const parsedQuestions = await parsePDF(buffer);
 
@@ -28,7 +32,7 @@ export async function POST(req: NextRequest) {
           optionD: q.options.D,
           correctAnswer: q.correctAnswer,
           topicId: topicId,
-          explanation: `This is a ${q.correctAnswer} question based on pharmacy principles.`, // Placeholder explanation
+          explanation: q.explanation,
         },
       });
       savedQuestions.push(saved);
@@ -38,8 +42,8 @@ export async function POST(req: NextRequest) {
       message: `Successfully uploaded ${savedQuestions.length} questions`,
       count: savedQuestions.length 
     });
-  } catch (error: any) {
-    console.error('Upload error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

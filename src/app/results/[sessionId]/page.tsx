@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from 'react';
 import Link from 'next/link';
-import { CheckCircle2, XCircle, ChevronRight, BarChart3, RotateCcw, Zap } from 'lucide-react';
+import { CheckCircle2, XCircle, BarChart3, RotateCcw, Zap } from 'lucide-react';
 
 interface Result {
   session: {

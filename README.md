@@ -1,45 +1,64 @@
 # AEON X - Pharmacy Mastery Engine
 
-An intelligent study and testing engine for UNIBEN Pharmacy students. Designed as a "recipe" for academic mastery.
+An intelligent, closed-loop study and testing engine for UNIBEN Pharmacy students. AEON X converts past examination data into guaranteed mastery outcomes.
 
-## Features
-- **PDF Ingestion**: Upload past questions and extract them automatically.
-- **Topic Mapping**: Questions are classified by syllabus topics.
-- **Mastery Testing**: CBT-style interface with Practice and Exam modes.
-- **Failure-Prevention**: Weak questions are prioritized with a 24-72h reinforcement rule.
-- **Progress Intelligence**: Visual dashboard tracking your mastery levels.
-- **Minimalist UI**: UNIBEN-aligned mobile-first design.
+## 🚀 Key Features
 
-## Tech Stack
-- **Next.js 15+** (App Router)
-- **Prisma** with **SQLite**
-- **Tailwind CSS 4**
-- **Lucide Icons**
-- **pdf-parse** (Modern fork)
+- **Intelligent PDF Ingestion**: Automated extraction of questions, options, and explanations from past-question PDFs.
+- **Topic Mapping**: Automatic classification of questions into the Pharmacy syllabus topics using keyword-based intelligence.
+- **Mastery-Based Testing**:
+  - **Practice Mode**: Immediate corrective feedback with professional pharmacy explanations.
+  - **Exam Mode**: Timed CBT-accurate simulation with locked answers.
+- **Failure-Prevention Logic**:
+  - Prioritizes weak questions (40% of test sets).
+  - Implements a **24-72 hour reinforcement rule** for failed items to ensure long-term retention.
+- **Progress Intelligence**: Real-time Mastery Dashboard visualizing conceptual gaps and improvement paths.
+- **Minimalist UI**: Zero-distraction, mobile-first design aligned with UNIBEN's professional aesthetic.
 
-## Getting Started
+## 🛠️ Tech Stack
 
-### 1. Clone and Install
+- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/) (Strictly Typed)
+- **Database**: [SQLite](https://sqlite.org/) with [Prisma ORM](https://www.prisma.io/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **PDF Engine**: [pdf-parse](https://www.npmjs.com/package/pdf-parse) (Modern Fork)
+- **Validation**: [Zod](https://zod.dev/)
+
+## 🏁 Getting Started
+
+### 1. Prerequisites
+- Node.js 20.x or higher
+- npm or yarn
+
+### 2. Installation
 ```bash
-git clone <your-repo-url>
+git clone <repository-url>
 cd aeon-x
 npm install
 ```
 
-### 2. Database Setup
+### 3. Database Initialization
 ```bash
 npx prisma migrate dev --name init
 node prisma/seed.js
 ```
 
-### 3. Run Development Server
+### 4. Run Development Server
 ```bash
 npm run dev
 ```
+Open [http://localhost:3000](http://localhost:3000) to start your mastery journey.
 
-## Creator Credit
+## 🧪 Testing
+Run the automated test suite to ensure system integrity:
+```bash
+npm run test
+```
+
+## ✨ Creator Credit
 Built by **Anthony Adogbeji Odjegba (AEONLight ✨)**.
-Designed specifically for the University of Benin (UNIBEN) Pharmacy curriculum.
+Designed for academic excellence in the University of Benin (UNIBEN) Pharmacy curriculum.
 
-## License
+## ⚖️ License
 MIT

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useCallback } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Clock, CheckCircle2, XCircle } from 'lucide-react';
 
@@ -30,6 +30,27 @@ function TestContent() {
   const [timeLeft, setTimeLeft] = useState(isExam ? 600 : 0); // 10 minutes for exam
   const [showFeedback, setShowFeedback] = useState(false);
 
+  const handleSubmit = useCallback(async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/test/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topicId,
+          answers,
+          mode
+        }),
+      });
+      const data = await response.json();
+      router.push(`/results/${data.sessionId}`);
+    } catch (error) {
+      console.error('Submission failed', error);
+      setSubmitting(false);
+    }
+  }, [topicId, answers, mode, router, submitting]);
+
   useEffect(() => {
     fetch(`/api/questions?topicId=${topicId}&limit=${isExam ? 20 : 10}`)
       .then(res => res.json())
@@ -54,7 +75,7 @@ function TestContent() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isExam, loading]);
+  }, [isExam, loading, handleSubmit]);
 
   const handleSelect = (answer: string) => {
     if (isExam && answers[questions[currentIndex].id]) return; // Lock answers in Exam Mode
@@ -62,27 +83,6 @@ function TestContent() {
     setAnswers({ ...answers, [questions[currentIndex].id]: answer });
     if (!isExam) {
       setShowFeedback(true);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (submitting) return;
-    setSubmitting(true);
-    try {
-      const response = await fetch('/api/test/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          topicId,
-          answers,
-          mode
-        }),
-      });
-      const data = await response.json();
-      router.push(`/results/${data.sessionId}`);
-    } catch (error) {
-      console.error('Submission failed', error);
-      setSubmitting(false);
     }
   };
 

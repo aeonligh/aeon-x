@@ -1,10 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "sqlite"
   url      = "file:./dev.db"
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Topic {
@@ -15,36 +15,36 @@ model Topic {
 }
 
 model Question {
-  id             String         @id @default(cuid())
-  text           String
-  optionA        String
-  optionB        String
-  optionC        String
-  optionD        String
-  correctAnswer  String // A, B, C, or D
-  explanation    String?
-  topic          Topic          @relation(fields: [topicId], references: [id])
-  topicId        String
-  year           Int?
-  courseCode     String?
-  userProgress   UserProgress[]
+  id            String        @id @default(cuid())
+  text          String
+  optionA       String
+  optionB       String
+  optionC       String
+  optionD       String
+  correctAnswer String
+  explanation   String?
+  topicId       String
+  year          Int?
+  courseCode    String?
+  topic         Topic         @relation(fields: [topicId], references: [id])
+  userProgress  UserProgress?
 }
 
 model UserProgress {
   id         String   @id @default(cuid())
-  questionId String
-  question   Question @relation(fields: [questionId], references: [id])
-  status     String   // "CORRECT", "INCORRECT"
+  questionId String   @unique
+  status     String
   attempts   Int      @default(0)
   lastSeen   DateTime @default(now())
+  question   Question @relation(fields: [questionId], references: [id])
 }
 
 model TestSession {
-  id          String   @id @default(cuid())
-  topicId     String
-  startTime   DateTime @default(now())
-  endTime     DateTime?
-  score       Int?
-  totalItems  Int
-  mode        String   // "PRACTICE", "EXAM"
+  id         String    @id @default(cuid())
+  topicId    String
+  startTime  DateTime  @default(now())
+  endTime    DateTime?
+  score      Int?
+  totalItems Int
+  mode       String
 }

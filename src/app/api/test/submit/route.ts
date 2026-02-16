@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { z } from 'zod';
+
+const submitSchema = z.object({
+  topicId: z.string(),
+  answers: z.record(z.string(), z.string()),
+  mode: z.enum(['PRACTICE', 'EXAM']),
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { topicId, answers, mode } = await req.body ? await req.json() : {};
-
-    if (!topicId || !answers) {
-      return NextResponse.json({ error: 'Missing required data' }, { status: 400 });
-    }
+    const body = await req.json();
+    const validatedData = submitSchema.parse(body);
+    const { topicId, answers, mode } = validatedData;
 
     let score = 0;
     const results = [];
@@ -22,12 +27,19 @@ export async function POST(req: NextRequest) {
       const isCorrect = question.correctAnswer === selectedAnswer;
       if (isCorrect) score++;
 
-      // Update User Progress
-      await prisma.userProgress.create({
-        data: {
-          questionId: questionId,
+      // Upsert User Progress
+      await prisma.userProgress.upsert({
+        where: { questionId },
+        update: {
           status: isCorrect ? 'CORRECT' : 'INCORRECT',
-          attempts: 1, // In a real app, we'd increment this
+          attempts: { increment: 1 },
+          lastSeen: new Date(),
+        },
+        create: {
+          questionId,
+          status: isCorrect ? 'CORRECT' : 'INCORRECT',
+          attempts: 1,
+          lastSeen: new Date(),
         }
       });
 
@@ -55,8 +67,11 @@ export async function POST(req: NextRequest) {
       total: Object.keys(answers).length,
       results
     });
-  } catch (error: any) {
-    console.error('Submit error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.errors }, { status: 400 });
+    }
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
